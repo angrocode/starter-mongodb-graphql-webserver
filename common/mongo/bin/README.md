@@ -1,0 +1,1 @@
+<div align="center">положите в директорию mongod из дистрибутива mongoDB</div>
