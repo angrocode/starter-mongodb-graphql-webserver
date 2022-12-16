@@ -15,6 +15,3 @@ export const serverConfig = Object.freeze({
   port: 8081,
   static: `${rootDir}/website`,
 })
-
-// C:\Code\VK\_project\_build\_11back\common\mongo\bin\mongod.exe --port 27033 --dbpath C:\Code\VK\_project\_build\_11back\common\mongo\db
-
