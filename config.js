@@ -2,7 +2,7 @@
 const rootDir = process.cwd()
 
 export const mongoConfig = Object.freeze({
-  loading: true, // запуск в месте с проектом: true, если запущен отдельно или удалённый: false
+  loading: false, // запуск в месте с проектом: true, если запущен отдельно или удалённый: false
   pathDb: `${rootDir}/common/mongo/db`,
   pathDbms: `${rootDir}/common/mongo/bin`,
   host: '127.0.0.1',
@@ -13,5 +13,5 @@ export const serverConfig = Object.freeze({
   secure: false,
   host: '127.0.0.1',
   port: 8081,
-  static: `${rootDir}/website`,
+  history: true,
 })

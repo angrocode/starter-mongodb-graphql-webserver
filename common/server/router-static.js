@@ -1,20 +1,20 @@
 import { join } from 'node:path'
 import { readdirSync, statSync, createReadStream } from 'node:fs'
-import { readFile as prReadFile } from 'node:fs/promises'
-import { PassThrough } from 'node:stream'
+import { serverConfig } from '../../config.js'
 import { e404 } from './e404.js'
+export { routerStatic }
 
 const db = {}
 const root = process.cwd()
 
-// ключи указываються в ./router.js
+// ключи соответсвуют ./router.js
 const routing = {
-  'default': join(root, 'web'),
+  '/': join(root, 'web'),
   'tools': join(root, 'tools'),
 }
 
 // имена подставляемые в конец urn
-// если не найдено совпадение
+// для получения фаилов по умолчанию
 const wildcardNames = [
   'index.html'
 ]
@@ -33,50 +33,55 @@ for (const [name, path] of Object.entries(routing)) {
   db[name] = scan(path)
 }
 
-export function routerStatic({key, rout, urn}) {
+function routerStatic({rout, urn}) {
 
-  if (!key) return e404()
-
-  const diffUrn = urn.filter(seg => !rout.includes(seg) && seg != '/')
+  const key = rout.toString()
+  const diffUrn = urn.filter(seg => !rout.includes(seg))
+  const extension = diffUrn.length > 0 ? diffUrn.at(-1).split('.').at(-1) : null
 
   let okPath = ''
   let okType = ''
 
-  for (const path of db[key]) {
-    if (path.toString() == diffUrn.toString()) {
-      okPath = join(routing[key], ...path)
-      const ext = path.at(-1).split('.').at(-1)
-      okType = ext in mimeTypes ? mimeTypes[ext] : mimeTypes['txt']
-      break
+  if (extension in mimeTypes)
+    for (const path of db[key]) {
+      if (path.toString() == diffUrn.toString()) {
+        okPath = join(routing[key], ...path)
+        okType = extension in mimeTypes ? mimeTypes[extension] : mimeTypes['txt']
+        break
+      }
     }
-  }
 
-  if (!okPath)
+  else
     wildcardLoop:
     for (const name of wildcardNames) {
       const xUrn = [...diffUrn, name].toString()
       for (const path of db[key]) {
         if (path.toString() == xUrn) {
           okPath = join(routing[key], ...path)
-          const ext = name.split('.').at(-1)
-          okType = ext in mimeTypes ? mimeTypes[ext] : mimeTypes['txt']
+          const extension = name.split('.').at(-1)
+          okType = extension in mimeTypes ? mimeTypes[extension] : mimeTypes['txt']
           break wildcardLoop
         }
       }
     }
 
-  if (okPath) 
-    return {
-      code: 200,
-      headers: {'Content-Type': okType},
-      resStream: createReadStream(okPath, 'utf8'),
-      encode: !['image/x-icon', 'image/png'].includes(okType),
+  if (okPath)
+    try {
+      return {
+        code: 200,
+        headers: {'Content-Type': okType},
+        resStream: createReadStream(okPath, 'utf8'),
+        encode: !['image/x-icon', 'image/png'].includes(okType),
+      }
+    } catch (error) {
+      return e404()
     }
+
+  if (serverConfig.history) return routerStatic({rout: ['/'], urn: ['/']})
 
   return e404()
 
 }
-
 
 function scan(dir) {
 
@@ -92,7 +97,6 @@ function scan(dir) {
       list = readdirSync(join(dir, ...path))
     } catch (e) {
       throw new Error(e)
-      //TODO: обработка ошибок
       // "EACCES" "EPERM" нет доступа по правам
     }
 

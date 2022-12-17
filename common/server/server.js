@@ -38,7 +38,6 @@ function server() {
   if (!('secure' in serverConfig)) throw new Error('serverConfig должен содержать secure')
   if (!('host'   in serverConfig)) throw new Error('serverConfig должен содержать host')
   if (!('port'   in serverConfig)) throw new Error('serverConfig должен содержать port')
-  if (!('static' in serverConfig)) throw new Error('serverConfig должен содержать static')
 
   webServer = serverConfig.secure ? https() : http()
 
