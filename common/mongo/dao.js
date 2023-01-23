@@ -2,7 +2,6 @@ import { emitWarning } from 'node:process'
 import { flattenObj, isArray } from '../utils.js'
 import { mongodb, mongoClient } from './client.js'
 
-// if (!mongoClient) throw new Error(`mongo dao mongoClient не существует`)
 
 export { mongoClient, mongodb }
 export { startDao }
@@ -16,18 +15,6 @@ function startDao(message) {
   if (startFlags.length == countFlags ) { countFlags = 0; dao() }
 
 }
-
-// /**
-//  *  DB "vk-app"
-//  *  @type {mongodb.Db}
-//  */
-// let DBApp = null
-
-// /**
-//  *  DB "vk-scheduler"
-//  *  @type {mongodb.Db}
-//  */
-// let DBScheduler = null
 
 /**
  *  Collection "units"
