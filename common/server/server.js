@@ -43,15 +43,6 @@ function server() {
 
   webServer.listen(serverConfig.port, serverConfig.host, error => error ? console.log(`Ошибка запуска вэб сервера ${error.message}`) : null)
 
-
-  // webServer.listen(port, host, error => {
-  //   error 
-  //    ? console.log(`HTTP server start error ${e.message}`) 
-  //    : secure 
-  //     ? console.log(`HTTP server running https://${host}:${port}`)
-  //     : console.log(`HTTP server running http://${host}:${port}`)
-  // })
-
   webServer.on('listening', () => {
     emitWarning('WebServerOpen', {
       type: 'Start/Stop Event',
