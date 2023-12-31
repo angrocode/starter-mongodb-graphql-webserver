@@ -14,6 +14,8 @@ import { waiting, processExit } from './common/utils.js'
   })
 })
 
+// https://gist.github.com/jproulx/133c6094a444b0f32fd4
+
 // ;['exit', 'uncaughtException', 'unhandledRejection'].forEach(name => {
 //   process.on(name, code => {
 //     stopProject(name, code)
